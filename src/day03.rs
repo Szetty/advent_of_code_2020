@@ -1,4 +1,4 @@
-pub fn part1(inp: String) {  
+pub fn part1(inp: String) {
     let map: Vec<Vec<char>> = inp.lines().map(|l| l.chars().collect()).collect();
     println!("{}", count_trees(map, (1, 3)));
 }
@@ -6,7 +6,10 @@ pub fn part1(inp: String) {
 pub fn part2(inp: String) {
     let map: Vec<Vec<char>> = inp.lines().map(|l| l.chars().collect()).collect();
     let steps = [(1, 1), (1, 3), (1, 5), (1, 7), (2, 1)];
-    let prod: i64 = steps.iter().map(|step| count_trees(map.clone(), *step)).product();
+    let prod: i64 = steps
+        .iter()
+        .map(|step| count_trees(map.clone(), *step))
+        .product();
     println!("{}", prod);
 }
 

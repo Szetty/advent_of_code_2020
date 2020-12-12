@@ -1,10 +1,10 @@
-use std::collections::{HashSet, HashMap};
-use std::iter::FromIterator;
 use phf::{phf_map, phf_set};
 use regex::Regex;
+use std::collections::{HashMap, HashSet};
+use std::iter::FromIterator;
 use std::ops::RangeInclusive;
 
-pub fn part1(inp: String) {  
+pub fn part1(inp: String) {
     println!("{}", count_valid_passport(inp, is_valid1));
 }
 
@@ -13,24 +13,25 @@ pub fn part2(inp: String) {
 }
 
 fn count_valid_passport(inp: String, is_valid: fn(Vec<&str>) -> bool) -> usize {
-    return
-        inp
+    return inp
         .split("\n\n")
-        .filter(|passport| {
-            is_valid(passport.split(['\n', ' ',].as_ref()).collect())
-        })
+        .filter(|passport| is_valid(passport.split(['\n', ' '].as_ref()).collect()))
         .count();
 }
 
-static REQUIRED_FIELDS: phf::Set<&str> = phf_set! { "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" };
+static REQUIRED_FIELDS: phf::Set<&str> =
+    phf_set! { "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" };
 
 fn is_valid1(passport: Vec<&str>) -> bool {
     let required_fields: HashSet<&str> = HashSet::from_iter(REQUIRED_FIELDS.iter().cloned());
-    let passport_fields = passport.iter().map(|entry| entry.split(":").next().unwrap()).collect();
+    let passport_fields = passport
+        .iter()
+        .map(|entry| entry.split(":").next().unwrap())
+        .collect();
     required_fields.difference(&passport_fields).count() == 0
 }
 
-lazy_static!{
+lazy_static! {
     static ref HGT_REGEX: Regex = Regex::new(r"^(\d+)cm|(\d+)in$").unwrap();
     static ref HCL_REGEX: Regex = Regex::new(r"^\#[0-9a-f]{6}$").unwrap();
 }
@@ -47,44 +48,53 @@ static VALIDATORS: phf::Map<&str, fn(&str) -> bool> = phf_map! {
 
 fn is_valid2(raw_passport: Vec<&str>) -> bool {
     let passport = parse_passport(raw_passport);
-    return VALIDATORS.entries().all(|(key, is_valid)|{
-        match passport.get(key) {
+    return VALIDATORS
+        .entries()
+        .all(|(key, is_valid)| match passport.get(key) {
             Some(value) => is_valid(value),
-            None => false
-        }
-    });
+            None => false,
+        });
 }
 
 fn parse_passport(passport: Vec<&str>) -> HashMap<&str, &str> {
-    return passport.iter().map(|entry| { 
-        match entry.split(":").collect::<Vec<&str>>()[..] {
+    return passport
+        .iter()
+        .map(|entry| match entry.split(":").collect::<Vec<&str>>()[..] {
             [key, value] => (key, value),
             _ => panic!("Invalid key-value {:?}", entry),
-        }
-    }).collect();
+        })
+        .collect();
 }
 
 fn validate_number_between(s: &str, r: RangeInclusive<i64>) -> bool {
-    s.parse::<i64>().map(|x| if r.contains(&x) { true } else { false } ).unwrap_or(false)
+    s.parse::<i64>()
+        .map(|x| if r.contains(&x) { true } else { false })
+        .unwrap_or(false)
 }
 
 fn validate_hgt(s: &str) -> bool {
     let captures = HGT_REGEX.captures(s);
-    return captures.and_then(|c| { 
-        let cm_validation = 
-            c.get(1)
-            .and_then(|n| {
+    return captures
+        .and_then(|c| {
+            let cm_validation = c.get(1).and_then(|n| {
                 let n = n.as_str().parse::<i32>().unwrap();
-                if n >= 150 && n <= 193 { Some(true) } else { None } 
+                if n >= 150 && n <= 193 {
+                    Some(true)
+                } else {
+                    None
+                }
             });
-        let in_validation =
-            c.get(2)
-            .and_then(|n| {
+            let in_validation = c.get(2).and_then(|n| {
                 let n = n.as_str().parse::<i32>().unwrap();
-                if n >= 59 && n <= 76 { Some(true) } else { None } 
+                if n >= 59 && n <= 76 {
+                    Some(true)
+                } else {
+                    None
+                }
             });
-        cm_validation.or(in_validation)
-    }).unwrap_or(false);
+            cm_validation.or(in_validation)
+        })
+        .unwrap_or(false);
 }
 
 fn validate_hcl(s: &str) -> bool {

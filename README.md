@@ -14,3 +14,7 @@ Running tests (some days may have unit tests):
 ```sh
 cargo test
 ```
+
+## Observations
+
+Solutions that can probably be optimized for time performance: 11.
