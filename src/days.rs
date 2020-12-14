@@ -24,6 +24,8 @@ mod day11;
 mod day12;
 #[path = "day13.rs"]
 mod day13;
+#[path = "day14.rs"]
+mod day14;
 
 pub fn noop(_inp: String) {}
 
@@ -44,7 +46,7 @@ pub fn get_day(day: u32) -> (DayFn, DayFn) {
         11 => (day11::part1, day11::part2),
         12 => (day12::part1, day12::part2),
         13 => (day13::part1, day13::part2),
-        14 => (noop, noop),
+        14 => (day14::part1, day14::part2),
         15 => (noop, noop),
         16 => (noop, noop),
         17 => (noop, noop),
