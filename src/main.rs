@@ -4,6 +4,7 @@ use std::time::{Duration, Instant};
 
 #[macro_use]
 extern crate lazy_static;
+extern crate nalgebra as na;
 extern crate regex;
 
 mod days;
