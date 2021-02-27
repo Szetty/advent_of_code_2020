@@ -56,7 +56,7 @@ impl FromIterator<Cup> for Cups {
         cups
     }
 }
-type Cup = usize;
+type Cup = u32;
 const MIN_CUP: Cup = 1;
 const MAX_CUP: Cup = 9;
 

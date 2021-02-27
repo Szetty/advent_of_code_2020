@@ -19,13 +19,13 @@ type Seats = Vec<Vec<char>>;
 
 fn simulate_and_count_occupied_seats(
     seats: String,
-    neighbour_map_builder: fn(Seats) -> NeighbourMap,
+    neighbour_map_builder: fn(&Seats) -> NeighbourMap,
     rules_applier: fn(seat: char, adjacent_seats: Vec<char>) -> char,
 ) -> usize {
     let seats: Seats = seats.lines().map(|l| l.chars().collect()).collect();
-    let neighbour_map = neighbour_map_builder(seats.clone());
+    let neighbour_map = neighbour_map_builder(&seats);
     return simulate_seatings_until_no_change_and_count_occupied_seats(
-        seats.clone(),
+        seats,
         neighbour_map,
         rules_applier,
     );
@@ -37,7 +37,7 @@ fn simulate_seatings_until_no_change_and_count_occupied_seats(
     rules_applier: fn(seat: char, adjacent_seats: Vec<char>) -> char,
 ) -> usize {
     loop {
-        let new_seats = simulate_seating(seats.clone(), neighbour_map.clone(), rules_applier);
+        let new_seats = simulate_seating(seats.clone(), &neighbour_map, rules_applier);
         if new_seats == seats {
             return seats
                 .iter()
@@ -56,7 +56,7 @@ fn simulate_seatings_until_no_change_and_count_occupied_seats(
 
 fn simulate_seating(
     seats: Seats,
-    neighbour_map: NeighbourMap,
+    neighbour_map: &NeighbourMap,
     rules_applier: fn(seat: char, adjacent_seats: Vec<char>) -> char,
 ) -> Seats {
     seats
@@ -89,7 +89,7 @@ static ADJACENT_POSITIONS: [(i32, i32); 8] = [
     (1, 1),
 ];
 
-fn build_neighbour_map1(seats: Seats) -> NeighbourMap {
+fn build_neighbour_map1(seats: &Seats) -> NeighbourMap {
     seats
         .iter()
         .enumerate()
@@ -142,7 +142,7 @@ fn apply_rules1(seat: char, adjacent_seats: Vec<char>) -> char {
     }
 }
 
-fn build_neighbour_map2(seats: Seats) -> NeighbourMap {
+fn build_neighbour_map2(seats: &Seats) -> NeighbourMap {
     seats
         .iter()
         .enumerate()
@@ -153,9 +153,7 @@ fn build_neighbour_map2(seats: Seats) -> NeighbourMap {
                 .map(|(j, _)| {
                     let neighbours = ADJACENT_POSITIONS
                         .iter()
-                        .filter_map(|(di, dj)| {
-                            find_seat(seats.clone(), i as i32, j as i32, *di, *dj)
-                        })
+                        .filter_map(|(di, dj)| find_seat(&seats, i as i32, j as i32, *di, *dj))
                         .collect::<Vec<(usize, usize)>>();
                     ((i, j), neighbours)
                 })
@@ -165,7 +163,7 @@ fn build_neighbour_map2(seats: Seats) -> NeighbourMap {
         .collect()
 }
 
-fn find_seat(seats: Seats, i: i32, j: i32, di: i32, dj: i32) -> Option<(usize, usize)> {
+fn find_seat(seats: &Seats, i: i32, j: i32, di: i32, dj: i32) -> Option<(usize, usize)> {
     let new_i = i as i32 + di;
     if (0..seats.len() as i32).contains(&new_i) {
         let new_j = j as i32 + dj;
@@ -174,7 +172,7 @@ fn find_seat(seats: Seats, i: i32, j: i32, di: i32, dj: i32) -> Option<(usize, u
             if seat != '.' {
                 Some((new_i as usize, new_j as usize))
             } else {
-                find_seat(seats.clone(), new_i, new_j, di, dj)
+                find_seat(seats, new_i, new_j, di, dj)
             }
         } else {
             None

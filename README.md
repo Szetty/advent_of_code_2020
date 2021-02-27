@@ -17,4 +17,4 @@ cargo test
 
 ## Observations
 
-Solutions that can probably be optimized for time performance: 11, 15, 17, 22, 23.
+Solutions that can probably be optimized for time performance: 15, 22, 23.

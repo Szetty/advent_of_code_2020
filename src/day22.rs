@@ -15,7 +15,7 @@ pub fn part2(inp: String) {
     );
 }
 
-type Card = usize;
+type Card = u8;
 type Deck = VecDeque<Card>;
 
 fn parse_player_decks_and_simulate_combat_and_compute_score(
@@ -80,10 +80,10 @@ fn do_simulate_recursive_combat(mut deck1: Deck, mut deck2: Deck) -> (u8, Deck) 
         previous_configurations.insert(configuration);
         let card1 = deck1.pop_front().unwrap();
         let card2 = deck2.pop_front().unwrap();
-        if card1 <= deck1.len() && card2 <= deck2.len() {
+        if card1 as usize <= deck1.len() && card2 as usize <= deck2.len() {
             match do_simulate_recursive_combat(
-                deck1.clone().into_iter().take(card1).collect(),
-                deck2.clone().into_iter().take(card2).collect(),
+                deck1.iter().take(card1 as usize).cloned().collect(),
+                deck2.iter().take(card2 as usize).cloned().collect(),
             ) {
                 (1, _) => {
                     deck1.push_back(card1);
